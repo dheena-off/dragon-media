@@ -1,0 +1,1137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Management - Dragon Media Academy</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* CSS Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #2563eb;
+            --primary-light: rgba(37, 99, 235, 0.1);
+            --secondary: #1e293b;
+            --success: #10b981;
+            --success-light: rgba(16, 185, 129, 0.1);
+            --warning: #f59e0b;
+            --warning-light: rgba(245, 158, 11, 0.1);
+            --danger: #ef4444;
+            --danger-light: rgba(239, 68, 68, 0.1);
+            --dark: #1f2937;
+            --light: #f8fafc;
+            --gray: #94a3b8;
+            --white: #ffffff;
+            --shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --border-radius: 8px;
+        }
+
+        body {
+            background-color: #f8fafc;
+            color: #334155;
+            line-height: 1.6;
+        }
+
+        /* Admin Dashboard Layout */
+        .admin-dashboard {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            min-height: 100vh;
+        }
+
+        /* Admin Header */
+        .admin-header {
+            grid-column: 2;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            background: var(--white);
+            box-shadow: var(--shadow);
+            z-index: 100;
+            position: sticky;
+            top: 0;
+        }
+
+        .admin-header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .sidebar-toggle {
+            background: none;
+            border: none;
+            font-size: 1.25rem;
+            cursor: pointer;
+            color: var(--secondary);
+            display: none;
+        }
+
+        .admin-header-left h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--secondary);
+        }
+
+        .admin-header-right {
+            position: relative;
+        }
+
+        .admin-user {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: var(--border-radius);
+            transition: background 0.3s;
+        }
+
+        .admin-user:hover {
+            background: var(--primary-light);
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--primary-light);
+        }
+
+        .user-name {
+            font-weight: 500;
+        }
+
+        .user-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: var(--white);
+            box-shadow: var(--shadow-lg);
+            border-radius: var(--border-radius);
+            padding: 0.5rem;
+            width: 180px;
+            z-index: 1000;
+            display: none;
+        }
+
+        .user-dropdown.show {
+            display: block;
+        }
+
+        .user-dropdown a {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            color: var(--secondary);
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background 0.3s;
+        }
+
+        .user-dropdown a:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        /* Admin Sidebar */
+        .admin-sidebar {
+            grid-row: 1 / span 2;
+            background: var(--secondary);
+            color: var(--white);
+            min-height: 100vh;
+            position: sticky;
+            top: 0;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-menu {
+            padding: 1rem 0;
+        }
+
+        .menu-header {
+            padding: 1rem 1.5rem;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1.5rem;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .menu-item:hover, .menu-item.active {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--white);
+        }
+
+        .menu-group {
+            margin-bottom: 1rem;
+        }
+
+        /* Admin Content */
+        .admin-content {
+            padding: 2rem;
+            grid-column: 2;
+        }
+
+        .content-header {
+            margin-bottom: 2rem;
+        }
+
+        .content-header h2 {
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: var(--secondary);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .breadcrumb {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        .breadcrumb a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .breadcrumb span {
+            color: var(--gray);
+        }
+
+        /* Action Bar */
+        .action-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            position: relative;
+            flex: 1;
+            max-width: 400px;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray);
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            border: 1px solid #cbd5e1;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .filter-group label {
+            margin-bottom: 0;
+            white-space: nowrap;
+            font-weight: 500;
+        }
+
+        .filter-group select {
+            padding: 0.5rem;
+            border: 1px solid #cbd5e1;
+            border-radius: var(--border-radius);
+            background: var(--white);
+        }
+
+        /* Button Styles */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background: #1d4ed8;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid #cbd5e1;
+            color: var(--secondary);
+        }
+
+        .btn-outline:hover {
+            background: #f1f5f9;
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: var(--white);
+        }
+
+        .btn-success:hover {
+            background: #059669;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: var(--white);
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+
+        .btn-icon {
+            padding: 0.5rem;
+            border-radius: 4px;
+            width: 32px;
+            height: 32px;
+        }
+
+        .btn-view {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .btn-edit {
+            background: var(--warning-light);
+            color: var(--warning);
+        }
+
+        /* Card Styles */
+        .card {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow-lg);
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        /* Table Styles */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th, .data-table td {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .data-table th {
+            background: #f1f5f9;
+            font-weight: 600;
+            color: var(--secondary);
+        }
+
+        .data-table tr:hover {
+            background: #f8fafc;
+        }
+
+        .badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge.success {
+            background: var(--success-light);
+            color: var(--success);
+        }
+
+        .badge.warning {
+            background: var(--warning-light);
+            color: var(--warning);
+        }
+
+        .badge.danger {
+            background: var(--danger-light);
+            color: var(--danger);
+        }
+
+        .badge.info {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        /* Student Info */
+        .student-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .student-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .page-info {
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            width: 100%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            font-weight: 600;
+            color: var(--secondary);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--gray);
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .modal-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+
+        /* Student Detail Styles */
+        .student-detail {
+            display: grid;
+            grid-template-columns: 120px 1fr;
+            gap: 1.5rem;
+        }
+
+        .student-profile {
+            text-align: center;
+        }
+
+        .student-profile-img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 1rem;
+            border: 3px solid var(--primary-light);
+        }
+
+        .student-detail-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .detail-group {
+            margin-bottom: 1rem;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: var(--secondary);
+            margin-bottom: 0.25rem;
+        }
+
+        .detail-value {
+            color: var(--gray);
+        }
+
+        .course-progress {
+            margin-top: 1.5rem;
+        }
+
+        .progress-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem;
+            border: 1px solid #e2e8f0;
+            border-radius: var(--border-radius);
+            margin-bottom: 0.5rem;
+        }
+
+        .progress-info {
+            flex: 1;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 0.5rem 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--primary);
+            border-radius: 4px;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 992px) {
+            .admin-dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            .admin-sidebar {
+                position: fixed;
+                left: -250px;
+                z-index: 1000;
+                height: 100vh;
+                overflow-y: auto;
+            }
+            
+            .admin-sidebar.show {
+                left: 0;
+            }
+            
+            .admin-header, .admin-content {
+                grid-column: 1;
+            }
+            
+            .sidebar-toggle {
+                display: block;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .admin-content {
+                padding: 1rem;
+            }
+            
+            .card-body {
+                padding: 1rem;
+            }
+            
+            .data-table {
+                display: block;
+                overflow-x: auto;
+            }
+            
+            .action-bar {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .search-box, .filter-group {
+                width: 100%;
+            }
+            
+            .filter-group select {
+                width: 100%;
+            }
+            
+            .student-detail {
+                grid-template-columns: 1fr;
+            }
+            
+            .student-detail-info {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body class="admin-dashboard">
+    <!-- Admin Header -->
+    <header class="admin-header">
+        <div class="admin-header-left">
+            <button class="sidebar-toggle">
+                <i class="fas fa-bars"></i>
+            </button>
+            <h1>Student Management</h1>
+        </div>
+        <div class="admin-header-right">
+            <div class="admin-user">
+                <img src="https://ui-avatars.com/api/?name=Admin+User&background=2563eb&color=fff" alt="Admin" class="user-avatar">
+                <span class="user-name">Admin User</span>
+                <i class="fas fa-chevron-down"></i>
+                <div class="user-dropdown">
+                    <a href="#"><i class="fas fa-user-cog"></i> Profile</a>
+                    <a href="#" id="adminLogout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Admin Sidebar -->
+    <aside class="admin-sidebar">
+        <div class="sidebar-menu">
+            <div class="menu-header">MAIN NAVIGATION</div>
+            
+            <a href="/admindasboard/admin-dm.html" class="menu-item">
+                <i class="fas fa-tachometer-alt"></i>
+                <span>Dashboard</span>
+            </a>
+            
+            <div class="menu-group">
+                <div class="menu-header">COURSES MANAGEMENT</div>
+                
+                <a href="/coursemanagement/course-dm.html" class="menu-item">
+                    <i class="fas fa-book"></i>
+                    <span>All Courses</span>
+                </a>
+                
+                <a href="/coursemanagement/course-dm.html" class="menu-item">
+                    <i class="fas fa-plus-circle"></i>
+                    <span>Add New Course</span>
+                </a>
+            </div>
+            
+            <div class="menu-group">
+                <div class="menu-header">STUDENT MANAGEMENT</div>
+                
+                <a href="/studentmanagement/studet-dm.html" class="menu-item active">
+                    <i class="fas fa-users"></i>
+                    <span>All Students</span>
+                </a>
+                
+                <a href="/studentmanagement/studet-dm.html" class="menu-item">
+                    <i class="fas fa-user-plus"></i>
+                    <span>New Registrations</span>
+                </a>
+                
+                <a href="/coursemanagement/course-dm.html" class="menu-item">
+                    <i class="fas fa-tasks"></i>
+                    <span>Course Enrollments</span>
+                </a>
+            </div>
+            
+            <div class="menu-group">
+                <div class="menu-header">CONTENT MANAGEMENT</div>
+                
+                <a href="/review/review-dm.html" class="menu-item">
+                    <i class="fas fa-star"></i>
+                    <span>Reviews & Testimonials</span>
+                </a>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="admin-content">
+        <div class="content-header">
+            <h2><i class="fas fa-users"></i> Student Management</h2>
+            <div class="breadcrumb">
+                <a href="admindashboard.html">Home</a> / <span>Students</span>
+            </div>
+        </div>
+        
+        <div class="action-bar">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Search students..." id="studentSearch">
+            </div>
+            <div class="filter-group">
+                <label>Filter:</label>
+                <select id="studentFilter">
+                    <option value="all">All Students</option>
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                    <option value="new">New Registrations</option>
+                    <option value="completed">Completed Courses</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-body">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Student</th>
+                            <th>Email</th>
+                            <th>Courses</th>
+                            <th>Joined</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="studentsTableBody">
+                        <!-- Students will be populated by JavaScript -->
+                    </tbody>
+                </table>
+                
+                <div class="pagination">
+                    <button class="btn btn-outline" id="prevStudentPage"><i class="fas fa-chevron-left"></i></button>
+                    <span class="page-info" id="studentPageInfo">Page 1 of 1</span>
+                    <button class="btn btn-outline" id="nextStudentPage"><i class="fas fa-chevron-right"></i></button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Student Detail Modal -->
+    <div class="modal" id="studentModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalStudentName">Student Details</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body" id="modalStudentBody">
+                <!-- Student details will be populated by JavaScript -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" id="closeStudentModal">Close</button>
+                <button class="btn btn-primary" id="editStudentBtn">Edit Student</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Student Management JavaScript
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM Elements
+            const studentSearch = document.getElementById('studentSearch');
+            const studentFilter = document.getElementById('studentFilter');
+            const prevStudentPage = document.getElementById('prevStudentPage');
+            const nextStudentPage = document.getElementById('nextStudentPage');
+            const studentPageInfo = document.getElementById('studentPageInfo');
+            const studentsTableBody = document.getElementById('studentsTableBody');
+            const adminUser = document.querySelector('.admin-user');
+            const userDropdown = document.querySelector('.user-dropdown');
+            const sidebarToggle = document.querySelector('.sidebar-toggle');
+            const sidebar = document.querySelector('.admin-sidebar');
+            const logoutBtn = document.getElementById('adminLogout');
+            const studentModal = document.getElementById('studentModal');
+            const modalStudentName = document.getElementById('modalStudentName');
+            const modalStudentBody = document.getElementById('modalStudentBody');
+            const closeStudentModal = document.getElementById('closeStudentModal');
+            const modalClose = document.querySelector('.modal-close');
+            const editStudentBtn = document.getElementById('editStudentBtn');
+            
+            // State variables
+            let currentStudentPage = 1;
+            const studentsPerPage = 5;
+            let allStudents = [];
+            let filteredStudents = [];
+            let currentStudentId = null;
+            
+            // Initialize
+            loadStudents();
+            setupEventListeners();
+            
+            function setupEventListeners() {
+                // Search and filter
+                studentSearch.addEventListener('input', filterStudents);
+                studentFilter.addEventListener('change', filterStudents);
+                
+                // Pagination
+                prevStudentPage.addEventListener('click', goToPrevStudentPage);
+                nextStudentPage.addEventListener('click', goToNextStudentPage);
+                
+                // UI interactions
+                adminUser.addEventListener('click', function() {
+                    userDropdown.classList.toggle('show');
+                });
+                
+                sidebarToggle.addEventListener('click', function() {
+                    sidebar.classList.toggle('show');
+                });
+                
+                logoutBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    if (confirm('Are you sure you want to logout?')) {
+                        alert('Logout successful! Redirecting to login page...');
+                        window.location.href = 'admin.html';
+                    }
+                });
+                
+                // Modal events
+                closeStudentModal.addEventListener('click', closeModal);
+                modalClose.addEventListener('click', closeModal);
+                editStudentBtn.addEventListener('click', editCurrentStudent);
+                
+                // Close dropdown when clicking outside
+                document.addEventListener('click', function(event) {
+                    if (!adminUser.contains(event.target)) {
+                        userDropdown.classList.remove('show');
+                    }
+                });
+                
+                // Close modal when clicking outside
+                studentModal.addEventListener('click', function(event) {
+                    if (event.target === studentModal) {
+                        closeModal();
+                    }
+                });
+            }
+            
+            function loadStudents() {
+                // Simulate API call
+                setTimeout(() => {
+                    allStudents = [
+                        { 
+                            id: 1, 
+                            name: "Rahul Sharma", 
+                            email: "rahul@example.com", 
+                            avatar: "https://ui-avatars.com/api/?name=Rahul+Sharma&background=random",
+                            phone: "+91 9876543210",
+                            courses: 3, 
+                            joined: "2023-01-15", 
+                            status: "active",
+                            lastLogin: "2023-06-18T14:30:00",
+                            enrollments: [
+                                { course: "Full Stack Development", progress: 85, status: "In Progress" },
+                                { course: "Data Science Fundamentals", progress: 100, status: "Completed" },
+                                { course: "UI/UX Design", progress: 45, status: "In Progress" }
+                            ]
+                        },
+                        { 
+                            id: 2, 
+                            name: "Priya Patel", 
+                            email: "priya@example.com", 
+                            avatar: "https://ui-avatars.com/api/?name=Priya+Patel&background=random",
+                            phone: "+91 9876543211",
+                            courses: 2, 
+                            joined: "2023-02-20", 
+                            status: "active",
+                            lastLogin: "2023-06-17T10:15:00",
+                            enrollments: [
+                                { course: "Digital Marketing", progress: 70, status: "In Progress" },
+                                { course: "Business Analytics", progress: 100, status: "Completed" }
+                            ]
+                        },
+                        { 
+                            id: 3, 
+                            name: "Amit Kumar", 
+                            email: "amit@example.com", 
+                            avatar: "https://ui-avatars.com/api/?name=Amit+Kumar&background=random",
+                            phone: "+91 9876543212",
+                            courses: 1, 
+                            joined: "2023-05-10", 
+                            status: "new",
+                            lastLogin: "2023-06-15T16:45:00",
+                            enrollments: [
+                                { course: "Full Stack Development", progress: 25, status: "In Progress" }
+                            ]
+                        },
+                        { 
+                            id: 4, 
+                            name: "Sneha Gupta", 
+                            email: "sneha@example.com", 
+                            avatar: "https://ui-avatars.com/api/?name=Sneha+Gupta&background=random",
+                            phone: "+91 9876543213",
+                            courses: 2, 
+                            joined: "2023-03-05", 
+                            status: "active",
+                            lastLogin: "2023-06-16T09:20:00",
+                            enrollments: [
+                                { course: "UI/UX Design", progress: 100, status: "Completed" },
+                                { course: "Data Science Fundamentals", progress: 60, status: "In Progress" }
+                            ]
+                        },
+                        { 
+                            id: 5, 
+                            name: "Vikram Singh", 
+                            email: "vikram@example.com", 
+                            avatar: "https://ui-avatars.com/api/?name=Vikram+Singh&background=random",
+                            phone: "+91 9876543214",
+                            courses: 4, 
+                            joined: "2022-11-15", 
+                            status: "inactive",
+                            lastLogin: "2023-05-22T11:30:00",
+                            enrollments: [
+                                { course: "Full Stack Development", progress: 100, status: "Completed" },
+                                { course: "Data Science Fundamentals", progress: 100, status: "Completed" },
+                                { course: "Digital Marketing", progress: 100, status: "Completed" },
+                                { course: "Cloud Computing", progress: 30, status: "Paused" }
+                            ]
+                        }
+                    ];
+                    
+                    filteredStudents = [...allStudents];
+                    renderStudents();
+                }, 800);
+            }
+            
+            function renderStudents() {
+                const start = (currentStudentPage - 1) * studentsPerPage;
+                const end = start + studentsPerPage;
+                const paginatedStudents = filteredStudents.slice(start, end);
+                
+                studentsTableBody.innerHTML = paginatedStudents.map(student => `
+                    <tr>
+                        <td>${student.id}</td>
+                        <td>
+                            <div class="student-info">
+                                <img src="${student.avatar}" alt="${student.name}" class="student-avatar">
+                                <span>${student.name}</span>
+                            </div>
+                        </td>
+                        <td>${student.email}</td>
+                        <td>${student.courses}</td>
+                        <td>${new Date(student.joined).toLocaleDateString()}</td>
+                        <td>
+                            <span class="badge ${student.status === 'active' ? 'success' : 
+                                             student.status === 'new' ? 'warning' : 
+                                             student.status === 'inactive' ? 'danger' : 'info'}">
+                                ${student.status}
+                            </span>
+                        </td>
+                        <td>
+                            <button class="btn-icon btn-view" data-id="${student.id}">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="btn-icon btn-edit" data-id="${student.id}">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+                
+                // Add event listeners to action buttons
+                document.querySelectorAll('.btn-view').forEach(btn => {
+                    btn.addEventListener('click', () => viewStudent(btn.dataset.id));
+                });
+                
+                document.querySelectorAll('.btn-edit').forEach(btn => {
+                    btn.addEventListener('click', () => editStudent(btn.dataset.id));
+                });
+                
+                // Update pagination info
+                const totalPages = Math.ceil(filteredStudents.length / studentsPerPage);
+                studentPageInfo.textContent = `Page ${currentStudentPage} of ${totalPages}`;
+                
+                // Disable/enable pagination buttons
+                prevStudentPage.disabled = currentStudentPage === 1;
+                nextStudentPage.disabled = currentStudentPage === totalPages || totalPages === 0;
+            }
+            
+            function filterStudents() {
+                const searchTerm = studentSearch.value.toLowerCase();
+                const filterValue = studentFilter.value;
+                
+                let filtered = allStudents;
+                
+                // Apply status filter
+                if (filterValue !== 'all') {
+                    filtered = filtered.filter(student => 
+                        filterValue === 'new' ? student.status === 'new' :
+                        filterValue === 'active' ? student.status === 'active' :
+                        filterValue === 'inactive' ? student.status === 'inactive' :
+                        filterValue === 'completed' ? 
+                            student.enrollments.some(e => e.status === 'Completed') : 
+                            true
+                    );
+                }
+                
+                // Apply search filter
+                if (searchTerm) {
+                    filtered = filtered.filter(student => 
+                        student.name.toLowerCase().includes(searchTerm) || 
+                        student.email.toLowerCase().includes(searchTerm)
+                    );
+                }
+                
+                filteredStudents = filtered;
+                currentStudentPage = 1;
+                renderStudents();
+            }
+            
+            function viewStudent(id) {
+                const student = allStudents.find(s => s.id == id);
+                if (student) {
+                    currentStudentId = student.id;
+                    modalStudentName.textContent = student.name;
+                    
+                    // Format the student details for the modal
+                    modalStudentBody.innerHTML = `
+                        <div class="student-detail">
+                            <div class="student-profile">
+                                <img src="${student.avatar}" alt="${student.name}" class="student-profile-img">
+                                <div class="badge ${student.status === 'active' ? 'success' : 
+                                                 student.status === 'new' ? 'warning' : 
+                                                 student.status === 'inactive' ? 'danger' : 'info'}">
+                                    ${student.status}
+                                </div>
+                            </div>
+                            <div class="student-detail-info">
+                                <div class="detail-group">
+                                    <div class="detail-label">Email</div>
+                                    <div class="detail-value">${student.email}</div>
+                                </div>
+                                <div class="detail-group">
+                                    <div class="detail-label">Phone</div>
+                                    <div class="detail-value">${student.phone}</div>
+                                </div>
+                                <div class="detail-group">
+                                    <div class="detail-label">Joined</div>
+                                    <div class="detail-value">${new Date(student.joined).toLocaleDateString()}</div>
+                                </div>
+                                <div class="detail-group">
+                                    <div class="detail-label">Last Login</div>
+                                    <div class="detail-value">${new Date(student.lastLogin).toLocaleString()}</div>
+                                </div>
+                                <div class="detail-group">
+                                    <div class="detail-label">Courses Enrolled</div>
+                                    <div class="detail-value">${student.courses}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="course-progress">
+                            <h4>Course Progress</h4>
+                            ${student.enrollments.map(enrollment => `
+                                <div class="progress-item">
+                                    <div class="progress-info">
+                                        <div>${enrollment.course}</div>
+                                        <div class="progress-bar">
+                                            <div class="progress-fill" style="width: ${enrollment.progress}%"></div>
+                                        </div>
+                                        <div>${enrollment.progress}% Complete - ${enrollment.status}</div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                    
+                    studentModal.classList.add('show');
+                }
+            }
+            
+            function editStudent(id) {
+                const student = allStudents.find(s => s.id == id);
+                if (student) {
+                    // In a real app, this would open an edit form
+                    alert(`Editing student: ${student.name}\nThis would open an edit form in a real application.`);
+                }
+            }
+            
+            function editCurrentStudent() {
+                if (currentStudentId) {
+                    editStudent(currentStudentId);
+                    closeModal();
+                }
+            }
+            
+            function closeModal() {
+                studentModal.classList.remove('show');
+                currentStudentId = null;
+            }
+            
+            function goToPrevStudentPage() {
+                if (currentStudentPage > 1) {
+                    currentStudentPage--;
+                    renderStudents();
+                }
+            }
+            
+            function goToNextStudentPage() {
+                const totalPages = Math.ceil(filteredStudents.length / studentsPerPage);
+                if (currentStudentPage < totalPages) {
+                    currentStudentPage++;
+                    renderStudents();
+                }
+            }
+        });
+    </script>
+</body>
+</html>

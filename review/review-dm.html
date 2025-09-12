@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Review Management - Dragon Media Academy</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* CSS Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #2563eb;
+            --primary-light: rgba(37, 99, 235, 0.1);
+            --secondary: #1e293b;
+            --success: #10b981;
+            --success-light: rgba(16, 185, 129, 0.1);
+            --warning: #f59e0b;
+            --warning-light: rgba(245, 158, 11, 0.1);
+            --danger: #ef4444;
+            --danger-light: rgba(239, 68, 68, 0.1);
+            --dark: #1f2937;
+            --light: #f8fafc;
+            --gray: #94a3b8;
+            --white: #ffffff;
+            --shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --border-radius: 8px;
+        }
+
+        body {
+            background-color: #f8fafc;
+            color: #334155;
+            line-height: 1.6;
+        }
+
+        /* Admin Dashboard Layout */
+        .admin-dashboard {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            min-height: 100vh;
+        }
+
+        /* Admin Header */
+        .admin-header {
+            grid-column: 2;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            background: var(--white);
+            box-shadow: var(--shadow);
+            z-index: 100;
+            position: sticky;
+            top: 0;
+        }
+
+        .admin-header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .sidebar-toggle {
+            background: none;
+            border: none;
+            font-size: 1.25rem;
+            cursor: pointer;
+            color: var(--secondary);
+            display: none;
+        }
+
+        .admin-header-left h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--secondary);
+        }
+
+        .admin-header-right {
+            position: relative;
+        }
+
+        .admin-user {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: var(--border-radius);
+            transition: background 0.3s;
+        }
+
+        .admin-user:hover {
+            background: var(--primary-light);
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--primary-light);
+        }
+
+        .user-name {
+            font-weight: 500;
+        }
+
+        .user-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: var(--white);
+            box-shadow: var(--shadow-lg);
+            border-radius: var(--border-radius);
+            padding: 0.5rem;
+            width: 180px;
+            z-index: 1000;
+            display: none;
+        }
+
+        .user-dropdown.show {
+            display: block;
+        }
+
+        .user-dropdown a {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            color: var(--secondary);
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background 0.3s;
+        }
+
+        .user-dropdown a:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        /* Admin Sidebar */
+        .admin-sidebar {
+            grid-row: 1 / span 2;
+            background: var(--secondary);
+            color: var(--white);
+            min-height: 100vh;
+            position: sticky;
+            top: 0;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-menu {
+            padding: 1rem 0;
+        }
+
+        .menu-header {
+            padding: 1rem 1.5rem;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1.5rem;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .menu-item:hover, .menu-item.active {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--white);
+        }
+
+        .menu-group {
+            margin-bottom: 1rem;
+        }
+
+        /* Admin Content */
+        .admin-content {
+            padding: 2rem;
+            grid-column: 2;
+        }
+
+        .content-header {
+            margin-bottom: 2rem;
+        }
+
+        .content-header h2 {
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: var(--secondary);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .breadcrumb {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        .breadcrumb a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .breadcrumb span {
+            color: var(--gray);
+        }
+
+        /* Review Tabs */
+        .review-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 0.5rem 1.5rem;
+            background: none;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            color: var(--gray);
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn.active {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        /* Card Styles */
+        .card {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow-lg);
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        /* Review List */
+        .review-list {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .review-item {
+            padding: 1.5rem;
+            border: 1px solid #e2e8f0;
+            border-radius: var(--border-radius);
+            background: white;
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+            gap: 1rem;
+        }
+
+        .review-user {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            flex: 1;
+        }
+
+        .review-user img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .review-user-info h4 {
+            margin-bottom: 0.25rem;
+            color: var(--secondary);
+        }
+
+        .review-user-info .course-badge {
+            display: inline-block;
+            background: var(--primary-light);
+            color: var(--primary);
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            margin-top: 0.25rem;
+        }
+
+        .review-meta {
+            text-align: right;
+            min-width: 120px;
+        }
+
+        .review-date {
+            font-size: 0.85rem;
+            color: var(--gray);
+            margin-bottom: 0.5rem;
+        }
+
+        .rating {
+            color: var(--warning);
+            font-size: 0.9rem;
+        }
+
+        .review-content {
+            margin-bottom: 1rem;
+        }
+
+        .review-content p {
+            line-height: 1.6;
+            color: var(--secondary);
+        }
+
+        .review-actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        /* Button Styles */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+
+        .btn-small {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.8rem;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background: #1d4ed8;
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: var(--white);
+        }
+
+        .btn-success:hover {
+            background: #059669;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: var(--white);
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid #cbd5e1;
+            color: var(--secondary);
+        }
+
+        .btn-outline:hover {
+            background: #f1f5f9;
+        }
+
+        /* Video Review */
+        .video-review {
+            margin-top: 1rem;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+        }
+
+        .video-review video {
+            width: 100%;
+            max-width: 400px;
+            border-radius: var(--border-radius);
+        }
+
+        /* Stats Cards */
+        .stats-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .stat-icon.bg-primary { background: var(--primary-light); color: var(--primary); }
+        .stat-icon.bg-warning { background: var(--warning-light); color: var(--warning); }
+        .stat-icon.bg-success { background: var(--success-light); color: var(--success); }
+
+        .stat-info h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.25rem;
+            font-weight: 700;
+        }
+
+        .stat-info p {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 2rem;
+            color: var(--gray);
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #cbd5e1;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 992px) {
+            .admin-dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            .admin-sidebar {
+                position: fixed;
+                left: -250px;
+                z-index: 1000;
+                height: 100vh;
+                overflow-y: auto;
+            }
+            
+            .admin-sidebar.show {
+                left: 0;
+            }
+            
+            .admin-header, .admin-content {
+                grid-column: 1;
+            }
+            
+            .sidebar-toggle {
+                display: block;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .admin-content {
+                padding: 1rem;
+            }
+            
+            .card-body {
+                padding: 1rem;
+            }
+            
+            .review-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .review-meta {
+                text-align: left;
+                width: 100%;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+            
+            .review-actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .stats-cards {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body class="admin-dashboard">
+    <!-- Admin Header -->
+    <header class="admin-header">
+        <div class="admin-header-left">
+            <button class="sidebar-toggle">
+                <i class="fas fa-bars"></i>
+            </button>
+            <h1>Review Management</h1>
+        </div>
+        <div class="admin-header-right">
+            <div class="admin-user">
+                <img src="https://ui-avatars.com/api/?name=Admin+User&background=2563eb&color=fff" alt="Admin" class="user-avatar">
+                <span class="user-name">Admin User</span>
+                <i class="fas fa-chevron-down"></i>
+                <div class="user-dropdown">
+                    <a href="#"><i class="fas fa-user-cog"></i> Profile</a>
+                    <a href="#" id="adminLogout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Admin Sidebar -->
+    <aside class="admin-sidebar">
+        <div class="sidebar-menu">
+            <div class="menu-header">MAIN NAVIGATION</div>
+            
+            <a href="/admindasboard/admin-dm.html" class="menu-item">
+                <i class="fas fa-tachometer-alt"></i>
+                <span>Dashboard</span>
+            </a>
+            
+            <div class="menu-group">
+                <div class="menu-header">COURSES MANAGEMENT</div>
+                
+                <a href="/coursemanagement/course-dm.html" class="menu-item">
+                    <i class="fas fa-book"></i>
+                    <span>All Courses</span>
+                </a>
+                
+                <a href="/coursemanagement/course-dm.html" class="menu-item">
+                    <i class="fas fa-plus-circle"></i>
+                    <span>Add New Course</span>
+                </a>
+            </div>
+            
+            <div class="menu-group">
+                <div class="menu-header">STUDENT MANAGEMENT</div>
+                
+                <a href="/studentmanagement/studet-dm.html" class="menu-item">
+                    <i class="fas fa-users"></i>
+                    <span>All Students</span>
+                </a>
+                
+                <a href="/studentmanagement/studet-dm.html" class="menu-item">
+                    <i class="fas fa-user-plus"></i>
+                    <span>New Registrations</span>
+                </a>
+            </div>
+            
+            <div class="menu-group">
+                <div class="menu-header">CONTENT MANAGEMENT</div>
+                
+                <a href="/review/review-dm.html" class="menu-item active">
+                    <i class="fas fa-star"></i>
+                    <span>Reviews & Testimonials</span>
+                </a>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="admin-content">
+        <div class="content-header">
+            <h2><i class="fas fa-star"></i> Review Management</h2>
+            <div class="breadcrumb">
+                <a href="admindashboard.html">Home</a> / <span>Reviews</span>
+            </div>
+        </div>
+        
+        <!-- Review Stats -->
+        <div class="stats-cards">
+            <div class="stat-card">
+                <div class="stat-icon bg-warning">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="stat-info">
+                    <h3 id="pendingCount">0</h3>
+                    <p>Pending Reviews</p>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon bg-success">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="stat-info">
+                    <h3 id="approvedCount">0</h3>
+                    <p>Approved Reviews</p>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon bg-primary">
+                    <i class="fas fa-quote-left"></i>
+                </div>
+                <div class="stat-info">
+                    <h3 id="testimonialCount">0</h3>
+                    <p>Featured Testimonials</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="review-tabs">
+            <button class="tab-btn active" data-tab="pending">Pending Approval</button>
+            <button class="tab-btn" data-tab="approved">Approved Reviews</button>
+            <button class="tab-btn" data-tab="testimonials">Testimonials</button>
+        </div>
+        
+        <div class="card">
+            <div class="card-body">
+                <div class="review-list" id="pendingReviews">
+                    <!-- Pending reviews will be loaded here -->
+                </div>
+                
+                <div class="review-list" id="approvedReviews" style="display: none;">
+                    <!-- Approved reviews will be loaded here -->
+                </div>
+                
+                <div class="review-list" id="testimonials" style="display: none;">
+                    <!-- Testimonials will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Review Management JavaScript
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM Elements
+            const tabButtons = document.querySelectorAll('.tab-btn');
+            const pendingReviews = document.getElementById('pendingReviews');
+            const approvedReviews = document.getElementById('approvedReviews');
+            const testimonials = document.getElementById('testimonials');
+            const adminUser = document.querySelector('.admin-user');
+            const userDropdown = document.querySelector('.user-dropdown');
+            const sidebarToggle = document.querySelector('.sidebar-toggle');
+            const sidebar = document.querySelector('.admin-sidebar');
+            const logoutBtn = document.getElementById('adminLogout');
+            const pendingCount = document.getElementById('pendingCount');
+            const approvedCount = document.getElementById('approvedCount');
+            const testimonialCount = document.getElementById('testimonialCount');
+            
+            // State variables
+            let allReviews = [];
+            
+            // Initialize
+            loadReviews();
+            setupEventListeners();
+            
+            function setupEventListeners() {
+                // Tab switching
+                tabButtons.forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        tabButtons.forEach(b => b.classList.remove('active'));
+                        this.classList.add('active');
+                        
+                        // Hide all review lists
+                        pendingReviews.style.display = 'none';
+                        approvedReviews.style.display = 'none';
+                        testimonials.style.display = 'none';
+                        
+                        // Show the selected tab
+                        document.getElementById(`${this.dataset.tab}Reviews`).style.display = 'block';
+                    });
+                });
+                
+                // UI interactions
+                adminUser.addEventListener('click', function() {
+                    userDropdown.classList.toggle('show');
+                });
+                
+                sidebarToggle.addEventListener('click', function() {
+                    sidebar.classList.toggle('show');
+                });
+                
+                logoutBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    if (confirm('Are you sure you want to logout?')) {
+                        alert('Logout successful! Redirecting to login page...');
+                        window.location.href = 'admin.html';
+                    }
+                });
+                
+                // Close dropdown when clicking outside
+                document.addEventListener('click', function(event) {
+                    if (!adminUser.contains(event.target)) {
+                        userDropdown.classList.remove('show');
+                    }
+                });
+            }
+            
+            function loadReviews() {
+                // Simulate API call to get reviews
+                setTimeout(() => {
+                    // In a real application, this would come from a database
+                    // For demo purposes, we'll use localStorage to simulate reviews from the frontend form
+                    let savedReviews = JSON.parse(localStorage.getItem('dragonAcademyReviews')) || [];
+                    
+                    // If no reviews in localStorage, load sample data
+                    if (savedReviews.length === 0) {
+                        savedReviews = [
+                            {
+                                id: 1,
+                                name: "Rahul Sharma",
+                                email: "rahul@example.com",
+                                position: "Web Developer",
+                                location: "Mumbai",
+                                course: "web",
+                                rating: 4,
+                                message: "The course was very comprehensive and covered all the topics I expected. The instructor was knowledgeable and provided good support throughout the course.",
+                                image: "https://ui-avatars.com/api/?name=Rahul+Sharma&background=random",
+                                date: "2023-06-15",
+                                status: "pending",
+                                featured: false
+                            },
+                            {
+                                id: 2,
+                                name: "Priya Patel",
+                                email: "priya@example.com",
+                                position: "Data Analyst",
+                                location: "Bangalore",
+                                course: "python",
+                                rating: 5,
+                                message: "Excellent course! The hands-on projects really helped me understand the concepts better. I've already applied what I learned to my current job.",
+                                image: "https://ui-avatars.com/api/?name=Priya+Patel&background=random",
+                                date: "2023-05-20",
+                                status: "approved",
+                                featured: false
+                            },
+                            {
+                                id: 3,
+                                name: "Amit Kumar",
+                                email: "amit@example.com",
+                                position: "Marketing Manager",
+                                location: "Delhi",
+                                course: "marketing",
+                                rating: 5,
+                                message: "This course completely transformed my career. I got promoted within 3 months of completion! The practical strategies were exactly what I needed.",
+                                image: "https://ui-avatars.com/api/?name=Amit+Kumar&background=random",
+                                date: "2023-04-10",
+                                status: "testimonial",
+                                featured: true,
+                                video: null
+                            }
+                        ];
+                    }
+                    
+                    allReviews = savedReviews;
+                    renderReviews();
+                    updateStats();
+                }, 800);
+            }
+            
+            function renderReviews() {
+                const pending = allReviews.filter(review => review.status === 'pending');
+                const approved = allReviews.filter(review => review.status === 'approved');
+                const testimonialList = allReviews.filter(review => review.status === 'testimonial');
+                
+                // Update counts
+                pendingCount.textContent = pending.length;
+                approvedCount.textContent = approved.length;
+                testimonialCount.textContent = testimonialList.length;
+                
+                // Render pending reviews
+                if (pending.length > 0) {
+                    pendingReviews.innerHTML = pending.map(review => createReviewHTML(review)).join('');
+                } else {
+                    pendingReviews.innerHTML = createEmptyState('No pending reviews', 'fas fa-check-circle');
+                }
+                
+                // Render approved reviews
+                if (approved.length > 0) {
+                    approvedReviews.innerHTML = approved.map(review => createReviewHTML(review)).join('');
+                } else {
+                    approvedReviews.innerHTML = createEmptyState('No approved reviews', 'fas fa-star');
+                }
+                
+                // Render testimonials
+                if (testimonialList.length > 0) {
+                    testimonials.innerHTML = testimonialList.map(review => createTestimonialHTML(review)).join('');
+                } else {
+                    testimonials.innerHTML = createEmptyState('No testimonials', 'fas fa-quote-left');
+                }
+                
+                // Add event listeners to action buttons
+                addReviewEventListeners();
+            }
+            
+            function createReviewHTML(review) {
+                const courseNames = {
+                    'web': 'Web Development',
+                    'python': 'Python & AI',
+                    'mobile': 'Mobile App Development',
+                    'design': 'Graphic Design',
+                    'marketing': 'Digital Marketing'
+                };
+                
+                return `
+                    <div class="review-item" data-id="${review.id}">
+                        <div class="review-header">
+                            <div class="review-user">
+                                <img src="${review.image}" alt="${review.name}">
+                                <div class="review-user-info">
+                                    <h4>${review.name}</h4>
+                                    <p>${review.position}, ${review.location}</p>
+                                    <span class="course-badge">${courseNames[review.course] || review.course}</span>
+                                </div>
+                            </div>
+                            <div class="review-meta">
+                                <div class="review-date">${new Date(review.date).toLocaleDateString()}</div>
+                                <div class="rating">
+                                    ${'<i class="fas fa-star"></i>'.repeat(review.rating)}
+                                    ${'<i class="far fa-star"></i>'.repeat(5 - review.rating)}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="review-content">
+                            <p>${review.message}</p>
+                        </div>
+                        <div class="review-actions">
+                            ${review.status === 'pending' ? `
+                            <button class="btn btn-success btn-small approve-btn">
+                                <i class="fas fa-check"></i> Approve
+                            </button>
+                            <button class="btn btn-danger btn-small reject-btn">
+                                <i class="fas fa-times"></i> Reject
+                            </button>
+                            <button class="btn btn-primary btn-small feature-btn">
+                                <i class="fas fa-home"></i> Feature as Testimonial
+                            </button>
+                            ` : ''}
+                            ${review.status === 'approved' ? `
+                            <button class="btn btn-primary btn-small feature-btn">
+                                <i class="fas fa-home"></i> Feature as Testimonial
+                            </button>
+                            <button class="btn btn-danger btn-small reject-btn">
+                                <i class="fas fa-times"></i> Remove
+                            </button>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            function createTestimonialHTML(review) {
+                const courseNames = {
+                    'web': 'Web Development',
+                    'python': 'Python & AI',
+                    'mobile': 'Mobile App Development',
+                    'design': 'Graphic Design',
+                    'marketing': 'Digital Marketing'
+                };
+                
+                return `
+                    <div class="review-item" data-id="${review.id}">
+                        <div class="review-header">
+                            <div class="review-user">
+                                <img src="${review.image}" alt="${review.name}">
+                                <div class="review-user-info">
+                                    <h4>${review.name}</h4>
+                                    <p>${review.position}, ${review.location}</p>
+                                    <span class="course-badge">${courseNames[review.course] || review.course}</span>
+                                </div>
+                            </div>
+                            <div class="review-meta">
+                                <div class="review-date">${new Date(review.date).toLocaleDateString()}</div>
+                                <div class="rating">
+                                    ${'<i class="fas fa-star"></i>'.repeat(review.rating)}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="review-content">
+                            <p>${review.message}</p>
+                            ${review.video ? `
+                            <div class="video-review">
+                                <video controls>
+                                    <source src="${review.video}" type="video/mp4">
+                                    Your browser does not support the video tag.
+                                </video>
+                            </div>
+                            ` : ''}
+                        </div>
+                        <div class="review-actions">
+                            <button class="btn btn-outline btn-small unfeature-btn">
+                                <i class="fas fa-home"></i> Remove from Testimonials
+                            </button>
+                            <button class="btn btn-danger btn-small reject-btn">
+                                <i class="fas fa-times"></i> Remove
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            function createEmptyState(message, icon) {
+                return `
+                    <div class="empty-state">
+                        <i class="${icon}"></i>
+                        <h3>${message}</h3>
+                        <p>When new reviews are submitted, they will appear here.</p>
+                    </div>
+                `;
+            }
+            
+            function addReviewEventListeners() {
+                // Approve buttons
+                document.querySelectorAll('.approve-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const reviewId = this.closest('.review-item').dataset.id;
+                        updateReviewStatus(reviewId, 'approved');
+                    });
+                });
+                
+                // Reject buttons
+                document.querySelectorAll('.reject-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const reviewId = this.closest('.review-item').dataset.id;
+                        if (confirm('Are you sure you want to remove this review?')) {
+                            deleteReview(reviewId);
+                        }
+                    });
+                });
+                
+                // Feature buttons
+                document.querySelectorAll('.feature-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const reviewId = this.closest('.review-item').dataset.id;
+                        updateReviewStatus(reviewId, 'testimonial');
+                    });
+                });
+                
+                // Unfeature buttons
+                document.querySelectorAll('.unfeature-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const reviewId = this.closest('.review-item').dataset.id;
+                        updateReviewStatus(reviewId, 'approved');
+                    });
+                });
+            }
+            
+            function updateReviewStatus(reviewId, newStatus) {
+                const reviewIndex = allReviews.findIndex(r => r.id == reviewId);
+                
+                if (reviewIndex !== -1) {
+                    allReviews[reviewIndex].status = newStatus;
+                    
+                    // Save to localStorage (simulating database update)
+                    localStorage.setItem('dragonAcademyReviews', JSON.stringify(allReviews));
+                    
+                    // Update the homepage if this is a testimonial
+                    if (newStatus === 'testimonial') {
+                        updateHomepageTestimonials(allReviews[reviewIndex]);
+                    }
+                    
+                    alert(`Review ${newStatus === 'approved' ? 'approved' : 'featured as testimonial'} successfully!`);
+                    renderReviews();
+                }
+            }
+            
+            function deleteReview(reviewId) {
+                const reviewIndex = allReviews.findIndex(r => r.id == reviewId);
+                
+                if (reviewIndex !== -1) {
+                    allReviews.splice(reviewIndex, 1);
+                    
+                    // Save to localStorage (simulating database update)
+                    localStorage.setItem('dragonAcademyReviews', JSON.stringify(allReviews));
+                    
+                    alert('Review removed successfully!');
+                    renderReviews();
+                }
+            }
+            
+            function updateStats() {
+                const pending = allReviews.filter(review => review.status === 'pending').length;
+                const approved = allReviews.filter(review => review.status === 'approved').length;
+                const testimonials = allReviews.filter(review => review.status === 'testimonial').length;
+                
+                pendingCount.textContent = pending;
+                approvedCount.textContent = approved;
+                testimonialCount.textContent = testimonials;
+            }
+            
+            function updateHomepageTestimonials(testimonial) {
+                // In a real application, this would update the database
+                // and the homepage would fetch the featured testimonials
+                console.log('Updating homepage with new testimonial:', testimonial);
+                
+                // For demo purposes, we'll just store in localStorage
+                let featuredTestimonials = JSON.parse(localStorage.getItem('featuredTestimonials')) || [];
+                
+                // Add new testimonial if not already there
+                if (!featuredTestimonials.some(t => t.id === testimonial.id)) {
+                    featuredTestimonials.push(testimonial);
+                    localStorage.setItem('featuredTestimonials', JSON.stringify(featuredTestimonials));
+                }
+            }
+        });
+    </script>
+</body>
+</html>
