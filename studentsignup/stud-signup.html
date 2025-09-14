@@ -889,7 +889,7 @@
                 return true;
             }
 
-            // Country validation function
+            // Distric validation function
             function validateCountry(input, errorElement) {
                 if (input.value === '') {
                     errorElement.style.display = 'block';
@@ -905,7 +905,7 @@
             // Password validation function
             function validatePassword(input, errorElement) {
                 // At least 8 characters, one uppercase, one lowercase, one number, one special character
-                const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+                 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
                 if (!passwordRegex.test(input.value)) {
                     errorElement.style.display = 'block';
                     input.parentElement.classList.add('shake');

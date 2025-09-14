@@ -727,8 +727,10 @@
         }
 
         @media (max-width: 768px) {
+
+            /* changed by dheena */
             .stats-cards {
-                grid-template-columns: 1fr;
+                grid-template-columns: 300px;
             }
             
             .admin-content {
@@ -751,7 +753,254 @@
             .form-actions {
                 flex-direction: column;
             }
-        }
+
+     /* Mobile M - 375px width */
+     
+@media (max-width: 375px) {
+    .admin-login-container {
+        padding: 0.75rem;
+    }
+    .admin-login-box {
+        max-width: 100%;
+        border-radius: 6px;
+    }
+    .login-logo {
+        width: 70px;
+        height: 70px;
+        padding: 0.3rem;
+    }
+    .login-comp-logo {
+        width: 55px;
+        height: 55px;
+    }
+    .input-with-icon input {
+        padding-left: 2.2rem;
+        font-size: 1rem;
+    }
+    .btn {
+        font-size: 1rem;
+        padding: 0.7rem 1.25rem;
+    }
+    .admin-dashboard {
+        grid-template-columns: 1fr;
+    }
+    .admin-sidebar {
+        width: 250px;
+        left: -250px;
+        position: fixed;
+        top: 0;
+        height: 100vh;
+        z-index: 1000;
+        transition: left 0.3s ease;
+    }
+    .admin-sidebar.show {
+        left: 0;
+    }
+    .admin-header {
+        padding: 0.85rem 1.25rem;
+    }
+    .admin-header-left h1 {
+        font-size: 1.35rem;
+    }
+    .stats-cards {
+        grid-template-columns: 1fr;
+        gap: 1.25rem;
+    }
+    .dashboard-row {
+        grid-template-columns: 1fr;
+        gap: 1.25rem;
+    }
+    .card-body {
+        padding: 1.25rem;
+    }
+    .data-table {
+        display: block;
+        overflow-x: auto;
+        font-size: 0.9rem;
+    }
+    .review-item {
+        padding: 0.85rem;
+    }
+    .user-avatar {
+        width: 36px;
+        height: 36px;
+    }
+    .user-dropdown {
+        width: 170px;
+    }
+    .modal-content {
+        max-width: 92%;
+    }
+    input, button {
+        font-size: 1rem;
+        padding: 0.6rem 1rem;
+    }
+}
+
+/* Mobile L - 425px width */
+@media (max-width: 425px) {
+    .admin-login-container {
+        padding: 1rem;
+    }
+    .admin-login-box {
+        max-width: 100%;
+        border-radius: 8px;
+    }
+    .login-logo {
+        width: 75px;
+        height: 75px;
+        padding: 0.35rem;
+    }
+    .login-comp-logo {
+        width: 60px;
+        height: 60px;
+    }
+    .input-with-icon input {
+        padding-left: 2.5rem;
+        font-size: 1.05rem;
+    }
+    .btn {
+        font-size: 1.05rem;
+        padding: 0.75rem 1.5rem;
+    }
+    .admin-dashboard {
+        grid-template-columns: 1fr;
+    }
+    .admin-sidebar {
+        width: 250px;
+        left: -250px;
+        position: fixed;
+        top: 0;
+        height: 100vh;
+        z-index: 1000;
+        transition: left 0.3s ease;
+    }
+    .admin-sidebar.show {
+        left: 0;
+    }
+    .admin-header {
+        padding: 1rem 1.5rem;
+    }
+    .admin-header-left h1 {
+        font-size: 1.5rem;
+    }
+    .stats-cards {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    .dashboard-row {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    .card-body {
+        padding: 1.5rem;
+    }
+    .data-table {
+        display: block;
+        overflow-x: auto;
+        font-size: 1rem;
+    }
+    .review-item {
+        padding: 1rem;
+    }
+    .user-avatar {
+        width: 40px;
+        height: 40px;
+    }
+    .user-dropdown {
+        width: 180px;
+    }
+    .modal-content {
+        max-width: 95%;
+    }
+    input, button {
+        font-size: 1.05rem;
+        padding: 0.75rem 1.5rem;
+    }
+}
+
+    @media (max-width: 320px) {
+    .admin-login-container {
+        padding: 0.5rem;
+    }
+    .admin-login-box {
+        max-width: 100%;
+        border-radius: 6px;
+    }
+    .login-logo {
+        width: 60px;
+        height: 60px;
+        padding: 0.25rem;
+    }
+    .login-comp-logo {
+        width: 50px;
+        height: 50px;
+    }
+    .input-with-icon input {
+        padding-left: 2rem;
+        font-size: 0.9rem;
+    }
+    .btn {
+        font-size: 0.9rem;
+        padding: 0.6rem 1rem;
+    }
+    .admin-dashboard {
+        grid-template-columns: 1fr;
+    }
+    .admin-sidebar {
+        width: 250px;
+        left: -250px;
+        position: fixed;
+        top: 0;
+        height: 100vh;
+        z-index: 1000;
+        transition: left 0.3s ease;
+    }
+    .admin-sidebar.show {
+        left: 0;
+    }
+    .admin-header {
+        padding: 0.75rem 1rem;
+    }
+    .admin-header-left h1 {
+        font-size: 1.25rem;
+    }
+    .stats-cards {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    .dashboard-row {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    .card-body {
+        padding: 1rem;
+    }
+    .data-table {
+        display: block;
+        overflow-x: auto;
+        font-size: 0.85rem;
+    }
+    .review-item {
+        padding: 0.75rem;
+    }
+    .user-avatar {
+        width: 32px;
+        height: 32px;
+    }
+    .user-dropdown {
+        width: 160px;
+    }
+    .modal-content {
+        max-width: 90%;
+    }
+    input, button {
+        font-size: 0.9rem;
+        padding: 0.5rem 0.75rem;
+    }
+}
+
+}
     </style>
 </head>
 <body>
@@ -825,7 +1074,7 @@
             <div class="sidebar-menu">
                 <div class="menu-header">MAIN NAVIGATION</div>
                 
-                <a href="/admindasboard/admin-dm.html" target="_blank" class="menu-item active" data-section="dashboard">
+                <a href="admin-dm.html" target="_blank" class="menu-item active" data-section="dashboard">
                     <i class="fas fa-tachometer-alt"></i>
                     <span>Dashboard</span>
                 </a>
@@ -833,12 +1082,12 @@
                 <div class="menu-group">
                     <div class="menu-header">COURSES MANAGEMENT</div>
                     
-                    <a href="/coursemanagement/course-dm.html" target="_blank" class="menu-item" data-section="courses">
+                    <a href="../coursemanagement/course-dm.html" target="_blank" class="menu-item" data-section="courses">
                         <i class="fas fa-book"></i>
                         <span>All Courses</span>
                     </a>
                     
-                    <a href="/coursemanagement/course-dm.html" target="_blank" class="menu-item" data-section="add-course">
+                    <a href="../coursemanagement/course-dm.html" target="_blank" class="menu-item" data-section="add-course">
                         <i class="fas fa-plus-circle"></i>
                         <span>Add New Course</span>
                     </a>
@@ -847,12 +1096,12 @@
                 <div class="menu-group">
                     <div class="menu-header">STUDENT MANAGEMENT</div>
                     
-                    <a href="/studentmanagement/studet-dm.html" target="_blank" class="menu-item" data-section="students">
+                    <a href="../studentmanagement/studet-dm.html" target="_blank" class="menu-item" data-section="students">
                         <i class="fas fa-users"></i>
                         <span>All Students</span>
                     </a>
                     
-                    <a href="/studentmanagement/studet-dm.html" target="_blank" class="menu-item" data-section="registrations">
+                    <a href="../studentmanagement/studet-dm.html" target="_blank" class="menu-item" data-section="registrations">
                         <i class="fas fa-user-plus"></i>
                         <span>New Registrations</span>
                     </a>
@@ -861,7 +1110,7 @@
                 <div class="menu-group">
                     <div class="menu-header">CONTENT MANAGEMENT</div>
                     
-                    <a href="/review/review-dm.html" target="_blank" class="menu-item"  data-section="reviews">
+                    <a href="../review/review-dm.html" target="_blank" class="menu-item"  data-section="reviews">
                         <i class="fas fa-star"></i>
                         <span>Student Reviews</span>
                     </a>
@@ -915,8 +1164,8 @@
                             <h3>₹2,85,000</h3>
                             <p>Monthly Revenue</p>
                         </div>
-                        <div class="stat-trend down">
-                            <i class="fas fa-arrow-down"></i> 3%
+                        <div class="stat-trend up">
+                            <i class="fas fa-arrow-up"></i> 15%
                         </div>
                     </div>
                     
